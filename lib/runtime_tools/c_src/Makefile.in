@@ -51,9 +51,16 @@ ifeq ($(findstring vxworks,$(TARGET)),vxworks)
 endif
 
 TRACE_DRV_INCLUDES = $(SYSINCLUDE)
+FLAVOR=smp ### Fix this somehow
 
 ALL_CFLAGS = $(CFLAGS) @DEFS@ $(TYPE_FLAGS) $(TRACE_DRV_INCLUDES) \
-	-I$(OBJDIR) -I$(ERL_TOP)/erts/emulator/$(TARGET)
+        -I$(ERL_TOP)/erts/emulator/$(TARGET)/opt/smp \
+	-I$(OBJDIR) \
+        -I$(ERL_TOP)/erts/emulator/$(TARGET) \
+        -I$(ERL_TOP)/erts/emulator/sys/unix \
+	-I$(ERL_TOP)/erts/emulator/sys/common \
+        -I$(ERL_TOP)/erts/emulator/hipe \
+        -DERTS_SMP
 
 ifeq ($(TYPE),debug)
 TYPEMARKER = .debug
@@ -86,10 +93,14 @@ before_DTrace_OBJS = $(OBJDIR)/dyntrace$(TYPEMARKER).o
 
 # Higher-level makefiles says that we can only compile on UNIX flavors
 NIF_LIB = $(LIBDIR)/dyntrace$(TYPEMARKER).@DED_EXT@
+SCHEDINFO_NIF_LIB = $(LIBDIR)/schedinfo$(TYPEMARKER).@DED_EXT@
 
 ifeq ($(HOST_OS),)
 HOST_OS := $(shell $(ERL_TOP)/erts/autoconf/config.guess)
 endif
+
+SCHEDINFO_DRV_OBJS = \
+        $(OBJDIR)/schedinfo_drv.o
 
 TRACE_IP_DRV_OBJS = \
 	$(OBJDIR)/trace_ip_drv.o
@@ -113,7 +124,7 @@ endif
 
 _create_dirs := $(shell mkdir -p $(OBJDIR) $(LIBDIR))
 
-debug opt valgrind: $(SOLIBS) $(OBJDIR) $(LIBDIR) $(NIF_LIB)
+debug opt valgrind: $(SOLIBS) $(OBJDIR) $(LIBDIR) $(NIF_LIB) $(SCHEDINFO_NIF_LIB)
 
 ifdef DTRACE_ENABLED
 DTRACE_USER_HEADER=$(OBJDIR)/dtrace_user.h
@@ -137,6 +148,7 @@ $(OBJDIR)/dtrace_user.o: $(before_DTrace_OBJS) $(OBJDIR)/dtrace_user.h
 endif
 
 DYNTRACE_OBJS = $(before_DTrace_OBJS) $(DTRACE_OBJS)
+SCHEDINFO_OBJS = $(OBJDIR)/schedinfo_drv.o
 
 $(OBJDIR):
 	-@mkdir -p $(OBJDIR)
@@ -152,6 +164,10 @@ $(NIF_LIB): $(DYNTRACE_OBJS)
 	$(INSTALL_DIR) $(LIBDIR)
 	$(LD) $(LDFLAGS) -o $@ $^ $(LDLIBS)
 
+$(SCHEDINFO_NIF_LIB): $(SCHEDINFO_OBJS)
+	$(INSTALL_DIR) $(LIBDIR)
+	$(LD) $(LDFLAGS) -o $@ $^ $(LDLIBS)
+
 $(OBJDIR)/%.o: %.c
 	$(CC) -c -o $@ $(ALL_CFLAGS) $<
 
@@ -161,9 +177,14 @@ $(LIBDIR)/trace_ip_drv.so: $(TRACE_IP_DRV_OBJS)
 $(LIBDIR)/trace_file_drv.so: $(TRACE_FILE_DRV_OBJS)
 	$(LD) $(LDFLAGS) -o $@ $^ -lc $(LIBS)
 
+$(LIBDIR)/schedinfo_drv.so: $(SCHEDINFO_DRV_OBJS)
+	$(LD) $(LDFLAGS) -o $@ $^ -lc $(LIBS)
+
 $(LIBDIR)/trace_ip_drv.dll: $(TRACE_IP_DRV_OBJS)
 	$(LD) $(LDFLAGS) -o $@ $^ $(LIBS)
 $(LIBDIR)/trace_file_drv.dll: $(TRACE_FILE_DRV_OBJS)
+	$(LD) $(LDFLAGS) -o $@ $^ $(LIBS)
+$(LIBDIR)/schedinfo_drv.dll: $(SCHEDINFO_DRV_OBJS)
 	$(LD) $(LDFLAGS) -o $@ $^ $(LIBS)
 #
 # VxWorks is simply to different from Unix in this sense.
@@ -196,7 +217,7 @@ release_spec: opt
 	$(INSTALL_DIR) $(RELSYSDIR)/priv/obj
 	$(INSTALL_DIR) $(RELSYSDIR)/priv/lib
 	$(INSTALL_PROGRAM) $(DYNTRACE_OBJS) $(RELSYSDIR)/priv/obj
-	$(INSTALL_PROGRAM) $(NIF_LIB) $(SOLIBS) $(RELSYSDIR)/priv/lib
+	$(INSTALL_PROGRAM) $(NIF_LIB) $(SCHEDINFO_NIF_LIB) $(SOLIBS) $(RELSYSDIR)/priv/lib
 
 release_docs_spec:
 
