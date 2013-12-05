@@ -12,6 +12,9 @@
 
 /* NIF interface declarations */
 static int load(ErlNifEnv* env, void** priv_data, ERL_NIF_TERM load_info);
+static int unload(ErlNifEnv* env, void** priv_data);
+static int upgrade(ErlNifEnv* env, void** priv_data, void *old_priv_data, ERL_NIF_TERM load_info);
+static int reload(ErlNifEnv* env, void** priv_data, ERL_NIF_TERM load_info);
 
 /* The NIFs: */
 static ERL_NIF_TERM snoop_runq1(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[]);
@@ -26,7 +29,7 @@ static ErlNifFunc nif_funcs[] = {
     {"active_schedulers", 0, active_schedulers}
 };
 
-ERL_NIF_INIT(schedinfo, nif_funcs, load, NULL, NULL, NULL)
+ERL_NIF_INIT(schedinfo, nif_funcs, load, reload, upgrade, unload)
 
 static ERL_NIF_TERM check_runq_flg(ErlNifEnv* env, ERL_NIF_TERM acc,
                                    erts_aint32_t* iflgs_ptr, erts_aint32_t flag, const char* flagname)
@@ -258,6 +261,21 @@ static ERL_NIF_TERM active_schedulers(ErlNifEnv* env, int argc, const ERL_NIF_TE
 }
 
 static int load(ErlNifEnv* env, void** priv_data, ERL_NIF_TERM load_info)
+{
+    return 0;
+}
+
+static int reload(ErlNifEnv* env, void** priv_data, ERL_NIF_TERM load_info)
+{
+    return 0;
+}
+
+static int upgrade(ErlNifEnv* env, void** priv_data, void *old_priv_data, ERL_NIF_TERM load_info)
+{
+    return 0;
+}
+
+static int unload(ErlNifEnv* env, void** priv_data)
 {
     return 0;
 }
