@@ -33,7 +33,7 @@ static ERL_NIF_TERM check_runq_flg(ErlNifEnv* env, ERL_NIF_TERM acc,
 {
     if ((*iflgs_ptr & flag) == flag)
     {
-        *iflgs_ptr ^= ~flag; // turn off the flag bits
+        *iflgs_ptr ^= flag; // toggle the flag bits
         return enif_make_list_cell(env,
                                    enif_make_atom(env, flagname),
                                    acc);
@@ -98,6 +98,7 @@ static ERL_NIF_TERM snoop_runq1(ErlNifEnv* env, int argc, const ERL_NIF_TERM arg
     erts_aint32_t iflgs;
     ERL_NIF_TERM full_reds_history;
     ERL_NIF_TERM prio_info;
+    ERL_NIF_TERM ports_info;
     int i;
 
     enif_get_int(env, argv[0], &id);
@@ -128,9 +129,12 @@ static ERL_NIF_TERM snoop_runq1(ErlNifEnv* env, int argc, const ERL_NIF_TERM arg
                                                      enif_make_int(env, rq->procs.prio_info[i].reds)),
                                     prio_info);
         }
-
+        ports_info = enif_make_tuple3(env,
+                                      enif_make_int(env, rq->ports.info.len),
+                                      enif_make_int(env, rq->ports.info.max_len),
+                                      enif_make_int(env, rq->ports.info.reds));
         return
-            enif_make_list(env, 18,
+            enif_make_list(env, 19,
                            enif_make_tuple2(env,
                                             enif_make_atom(env, "ix"),
                                             enif_make_int(env, rq->ix)),
@@ -184,7 +188,10 @@ static ERL_NIF_TERM snoop_runq1(ErlNifEnv* env, int argc, const ERL_NIF_TERM arg
                                             enif_make_int(env, rq->procs.len)),
                            enif_make_tuple2(env,
                                             enif_make_atom(env, "procs.prio_info"),
-                                            prio_info));
+                                            prio_info),
+                           enif_make_tuple2(env,
+                                            enif_make_atom(env, "procs.ports.info"),
+                                            ports_info));
     }
     else
     {
