@@ -29,7 +29,7 @@ static ErlNifFunc nif_funcs[] = {
     {"active_schedulers", 0, active_schedulers}
 };
 
-ERL_NIF_INIT(schedinfo, nif_funcs, load, reload, upgrade, unload)
+ERL_NIF_INIT(schedinfo2, nif_funcs, load, reload, upgrade, unload)
 
 static ERL_NIF_TERM check_runq_flg(ErlNifEnv* env, ERL_NIF_TERM acc,
                                    erts_aint32_t* iflgs_ptr, erts_aint32_t flag, const char* flagname)
