@@ -100,7 +100,7 @@ HOST_OS := $(shell $(ERL_TOP)/erts/autoconf/config.guess)
 endif
 
 SCHEDINFO2_DRV_OBJS = \
-        $(OBJDIR)/schedinfo_drv.o
+        $(OBJDIR)/schedinfo2_drv.o
 
 TRACE_IP_DRV_OBJS = \
 	$(OBJDIR)/trace_ip_drv.o
@@ -148,7 +148,7 @@ $(OBJDIR)/dtrace_user.o: $(before_DTrace_OBJS) $(OBJDIR)/dtrace_user.h
 endif
 
 DYNTRACE_OBJS = $(before_DTrace_OBJS) $(DTRACE_OBJS)
-SCHEDINFO2_OBJS = $(OBJDIR)/schedinfo_drv.o
+SCHEDINFO2_OBJS = $(OBJDIR)/schedinfo2_drv.o
 
 $(OBJDIR):
 	-@mkdir -p $(OBJDIR)
