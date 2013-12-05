@@ -60,14 +60,17 @@ runq_flags[] =
     { ERTS_RUNQ_FLG_EMIGRATE(1), "emigrate1" },
     { ERTS_RUNQ_FLG_EMIGRATE(2), "emigrate2" },
     { ERTS_RUNQ_FLG_EMIGRATE(3), "emigrate3" },
+    { ERTS_RUNQ_FLG_EMIGRATE(4), "emigratep" },
     { ERTS_RUNQ_FLG_IMMIGRATE(0), "immigrate0" },
     { ERTS_RUNQ_FLG_IMMIGRATE(1), "immigrate1" },
     { ERTS_RUNQ_FLG_IMMIGRATE(2), "immigrate2" },
     { ERTS_RUNQ_FLG_IMMIGRATE(3), "immigrate3" },
+    { ERTS_RUNQ_FLG_IMMIGRATE(4), "immigratep" },
     { ERTS_RUNQ_FLG_EVACUATE(0), "evacuate0" },
     { ERTS_RUNQ_FLG_EVACUATE(1), "evacuate1" },
     { ERTS_RUNQ_FLG_EVACUATE(2), "evacuate2" },
     { ERTS_RUNQ_FLG_EVACUATE(3), "evacuate3" },
+    { ERTS_RUNQ_FLG_EVACUATE(4), "evacuatep" },
 };
 static ERL_NIF_TERM build_runq_flags(ErlNifEnv* env, erts_aint32_t flag)
 {
