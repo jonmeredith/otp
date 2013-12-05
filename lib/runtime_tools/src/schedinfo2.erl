@@ -1,4 +1,4 @@
--module(schedinfo).
+-module(schedinfo2).
 
 %%% @doc Scheduler info sneeky peeky NIF
 %%%
@@ -14,7 +14,7 @@
 
 on_load() ->
     PrivDir = code:priv_dir(runtime_tools),
-    LibName = "schedinfo",
+    LibName = "schedinfo2",
     Lib = filename:join([PrivDir, "lib", LibName]),
     case erlang:load_nif(Lib, 0) of
         ok -> ok;

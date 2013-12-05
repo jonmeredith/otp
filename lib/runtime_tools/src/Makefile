@@ -48,7 +48,7 @@ MODULES= \
 	dyntrace \
 	percept_profile \
 	observer_backend \
-	schedinfo \
+	schedinfo2 \
 	ttb_autostart
 HRL_FILES= ../include/observer_backend.hrl
 

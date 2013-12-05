@@ -93,13 +93,13 @@ before_DTrace_OBJS = $(OBJDIR)/dyntrace$(TYPEMARKER).o
 
 # Higher-level makefiles says that we can only compile on UNIX flavors
 NIF_LIB = $(LIBDIR)/dyntrace$(TYPEMARKER).@DED_EXT@
-SCHEDINFO_NIF_LIB = $(LIBDIR)/schedinfo$(TYPEMARKER).@DED_EXT@
+SCHEDINFO2_NIF_LIB = $(LIBDIR)/schedinfo2$(TYPEMARKER).@DED_EXT@
 
 ifeq ($(HOST_OS),)
 HOST_OS := $(shell $(ERL_TOP)/erts/autoconf/config.guess)
 endif
 
-SCHEDINFO_DRV_OBJS = \
+SCHEDINFO2_DRV_OBJS = \
         $(OBJDIR)/schedinfo_drv.o
 
 TRACE_IP_DRV_OBJS = \
@@ -148,7 +148,7 @@ $(OBJDIR)/dtrace_user.o: $(before_DTrace_OBJS) $(OBJDIR)/dtrace_user.h
 endif
 
 DYNTRACE_OBJS = $(before_DTrace_OBJS) $(DTRACE_OBJS)
-SCHEDINFO_OBJS = $(OBJDIR)/schedinfo_drv.o
+SCHEDINFO2_OBJS = $(OBJDIR)/schedinfo_drv.o
 
 $(OBJDIR):
 	-@mkdir -p $(OBJDIR)
@@ -177,14 +177,14 @@ $(LIBDIR)/trace_ip_drv.so: $(TRACE_IP_DRV_OBJS)
 $(LIBDIR)/trace_file_drv.so: $(TRACE_FILE_DRV_OBJS)
 	$(LD) $(LDFLAGS) -o $@ $^ -lc $(LIBS)
 
-$(LIBDIR)/schedinfo_drv.so: $(SCHEDINFO_DRV_OBJS)
+$(LIBDIR)/schedinfo2_drv.so: $(SCHEDINFO2_DRV_OBJS)
 	$(LD) $(LDFLAGS) -o $@ $^ -lc $(LIBS)
 
 $(LIBDIR)/trace_ip_drv.dll: $(TRACE_IP_DRV_OBJS)
 	$(LD) $(LDFLAGS) -o $@ $^ $(LIBS)
 $(LIBDIR)/trace_file_drv.dll: $(TRACE_FILE_DRV_OBJS)
 	$(LD) $(LDFLAGS) -o $@ $^ $(LIBS)
-$(LIBDIR)/schedinfo_drv.dll: $(SCHEDINFO_DRV_OBJS)
+$(LIBDIR)/schedinfo2_drv.dll: $(SCHEDINFO2_DRV_OBJS)
 	$(LD) $(LDFLAGS) -o $@ $^ $(LIBS)
 #
 # VxWorks is simply to different from Unix in this sense.
